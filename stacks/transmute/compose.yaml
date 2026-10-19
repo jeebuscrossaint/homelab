@@ -1,0 +1,13 @@
+# Transmute: file converter (images, video, audio, docs...). Still beta.
+services:
+  transmute:
+    image: ghcr.io/transmute-app/transmute:latest
+    container_name: transmute
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data
+    networks: [proxy]
+
+networks:
+  proxy:
+    external: true

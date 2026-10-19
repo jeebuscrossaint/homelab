@@ -1,0 +1,40 @@
+# Each tile: href is where clicking goes, container shows running/stopped.
+- Tools:
+    - Stirling PDF:
+        icon: stirling-pdf.png
+        href: http://pdf.{{HOMEPAGE_VAR_LAB_DOMAIN}}
+        description: edit, merge, split, convert PDFs
+        server: local
+        container: stirling-pdf
+    - Transmute:
+        icon: mdi-swap-horizontal
+        href: http://convert.{{HOMEPAGE_VAR_LAB_DOMAIN}}
+        description: convert any file to any file
+        server: local
+        container: transmute
+    - SearXNG:
+        icon: searxng.png
+        href: http://search.{{HOMEPAGE_VAR_LAB_DOMAIN}}
+        description: private search
+        server: local
+        container: searxng
+    - Changedetection:
+        icon: changedetection-io.png
+        href: http://changes.{{HOMEPAGE_VAR_LAB_DOMAIN}}
+        description: get pinged when a website changes
+        server: local
+        container: changedetection
+
+- System:
+    - Dockge:
+        icon: dockge.png
+        href: http://dockge.{{HOMEPAGE_VAR_LAB_DOMAIN}}
+        description: start, stop, edit stacks
+        server: local
+        container: dockge
+    - Uptime Kuma:
+        icon: uptime-kuma.png
+        href: http://status.{{HOMEPAGE_VAR_LAB_DOMAIN}}
+        description: is everything up
+        server: local
+        container: uptime-kuma

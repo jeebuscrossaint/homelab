@@ -1,0 +1,15 @@
+# changedetection.io: watches web pages and tells you when they change.
+services:
+  changedetection:
+    image: ghcr.io/dgtlmoon/changedetection.io:latest
+    container_name: changedetection
+    restart: unless-stopped
+    environment:
+      BASE_URL: http://changes.${LAB_DOMAIN}
+    volumes:
+      - ./data:/datastore
+    networks: [proxy]
+
+networks:
+  proxy:
+    external: true

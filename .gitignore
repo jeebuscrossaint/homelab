@@ -1,0 +1,5 @@
+.env
+!.env.example
+dockge/data/
+stacks/*/data/
+stacks/homepage/config/logs/
