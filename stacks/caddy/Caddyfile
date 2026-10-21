@@ -83,7 +83,20 @@ logs.{$LAB_DOMAIN} {
 }
 
 share.{$LAB_DOMAIN} {
-	reverse_proxy zipline:3000
+	# no login screen: opening a page while signed out signs you in (pages/share-login.html).
+	# Only here; the public Funnel address skips Caddy and keeps Pingvin's login.
+	@login {
+		header Sec-Fetch-Dest document
+		not header Cookie *access_token=*
+	}
+	handle @login {
+		root * /srv/pages
+		rewrite * /share-login.html
+		header Cache-Control no-store
+		templates
+		file_server
+	}
+	reverse_proxy pingvin:3000
 }
 
 top.{$LAB_DOMAIN} {

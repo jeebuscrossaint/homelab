@@ -11,6 +11,7 @@ services:
       LAB_DOMAIN: ${LAB_DOMAIN}
       TAILSCALE_IP: ${TAILSCALE_IP}
       OVERLEAF_PASSWORD: ${OVERLEAF_PASSWORD}
+      PINGVIN_PASSWORD: ${PINGVIN_PASSWORD}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ./pages:/srv/pages:ro

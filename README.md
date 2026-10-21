@@ -61,7 +61,7 @@ A new server makes a new certificate, so you'd do this again after moving.
 | `latex.lab` | Overleaf: LaTeX with autocomplete |
 | `keep.lab` | Karakeep: bookmarks that keep a copy of the page |
 | `draw.lab` | ExcaliDash: Excalidraw that keeps all your drawings |
-| `share.lab` | Zipline: upload a file, send anyone the link (public via Tailscale Funnel) |
+| `share.lab` | Pingvin Share: upload a file, send anyone the link (public via Tailscale Funnel) |
 | `tools.lab` | IT-Tools: converters, encoders, QR codes and more |
 | `term.lab` | terminal on the server, no login |
 
