@@ -47,6 +47,10 @@ A new server makes a new certificate, so you'd do this again after moving.
 
 ## Apps
 
+None of them ask you to log in. That's fine because they only listen on the Tailscale
+IP, never the Wi-Fi/LAN the server sits on (the one exception, `share.lab`'s public
+links, goes through Tailscale Funnel and keeps its login page).
+
 | address | app |
 |---|---|
 | `home.lab` | Homepage dashboard |
@@ -63,7 +67,7 @@ A new server makes a new certificate, so you'd do this again after moving.
 | `draw.lab` | ExcaliDash: Excalidraw that keeps all your drawings |
 | `share.lab` | Pingvin Share: upload a file, send anyone the link (public via Tailscale Funnel) |
 | `tools.lab` | IT-Tools: converters, encoders, QR codes and more |
-| `term.lab` | terminal on the server, no login |
+| `term.lab` | terminal on the server |
 
 Also running, with no page of its own: a **Tor Snowflake proxy** (`stacks/snowflake`)
 that helps people in censored countries reach Tor.

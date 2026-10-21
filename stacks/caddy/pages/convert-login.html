@@ -1,0 +1,30 @@
+<!doctype html>
+<!-- Caddy shows this on convert.lab until you're signed in, and signs you in as the one
+     user. Transmute keeps its token in the browser, where Caddy can't see it, so this
+     also sets a cookie that tells Caddy you're signed in. install.sh makes the user. -->
+<meta charset="utf-8">
+<title>Transmute</title>
+<body style="background:#fff;font:16px sans-serif;padding:2em">
+<p id="msg">Signing in…</p>
+<script>
+(async () => {
+	try {
+		const res = await fetch('/api/users/authenticate', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ username: 'me', password: '{{env "TRANSMUTE_PASSWORD"}}' }),
+		})
+		const body = await res.json().catch(() => ({}))
+		if (!res.ok) throw new Error(body.detail || res.status)
+		localStorage.setItem('transmute-access-token', body.access_token)
+		sessionStorage.removeItem('logged_out')
+		// the cookie runs out a day before the token, so you get signed in again in time
+		const maxAge = Math.max(body.expires_in - 86400, 3600)
+		document.cookie = 'transmute_auto=1; path=/; max-age=' + maxAge + '; secure; samesite=lax'
+		location.replace(location.pathname.startsWith('/auth') ? '/' : location.href)
+	} catch (err) {
+		document.getElementById('msg').textContent =
+			"Couldn't sign in (" + err.message + '). Run sudo ./install.sh on the server to make the Transmute user.'
+	}
+})()
+</script>

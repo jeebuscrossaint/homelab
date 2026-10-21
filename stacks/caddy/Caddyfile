@@ -30,6 +30,16 @@ pdf.{$LAB_DOMAIN} {
 }
 
 convert.{$LAB_DOMAIN} {
+	# no login screen: signs you in until the transmute_auto cookie says you are,
+	# and again whenever you land on its login page (pages/convert-login.html)
+	@login expression `header({'Sec-Fetch-Dest': 'document'}) && (!header_regexp('Cookie', 'transmute_auto=1') || path('/auth', '/auth/*'))`
+	handle @login {
+		root * /srv/pages
+		rewrite * /convert-login.html
+		header Cache-Control no-store
+		templates
+		file_server
+	}
 	reverse_proxy transmute:3313
 }
 

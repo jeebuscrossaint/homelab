@@ -142,6 +142,9 @@ if ! cmp -s "$HOMELAB_DIR/system/docker-daemon.json" /etc/docker/daemon.json; th
 	RECREATE=yes # the log limits only apply to apps started after this
 fi
 ok "app logs capped at 30MB each, apps survive docker restarts"
+install -D -m 644 "$HOMELAB_DIR/system/sysctl-tailscale-bind.conf" /etc/sysctl.d/99-tailscale-bind.conf
+sysctl -q -p /etc/sysctl.d/99-tailscale-bind.conf
+ok "apps listen on Tailscale only, even when Docker starts first at boot"
 if [ "$ID" = arch ]; then
 	install -Dm644 "$HOMELAB_DIR/system/zram-generator.conf" /etc/systemd/zram-generator.conf
 	install -Dm644 "$HOMELAB_DIR/system/sysctl-zram.conf" /etc/sysctl.d/99-zram.conf
@@ -241,6 +244,31 @@ if [ -d "$OVERLEAF" ]; then
 	else
 		echo " ✗ couldn't make the Overleaf user. See why with:"
 		echo "   docker exec -i -w /overleaf/services/web overleaf node --input-type=module < $OVERLEAF/make-user.mjs"
+	fi
+fi
+
+# Dockge: one user, then its login screen turned off
+if docker exec -i -w /app -e DOCKGE_PASSWORD="$(sed -n 's/^DOCKGE_PASSWORD=//p' "$ENV_FILE")" \
+	dockge node - < "$HOMELAB_DIR/dockge/setup.js" >/dev/null 2>&1; then
+	ok "dockge.lab has no login screen"
+else
+	echo " ✗ couldn't set up Dockge's user. See why with:"
+	echo "   docker exec -i -w /app dockge node - < $HOMELAB_DIR/dockge/setup.js"
+fi
+
+# Transmute: one user that convert.lab signs you in as (Caddy serves the sign-in page)
+TRANSMUTE="$HOMELAB_DIR/stacks/transmute"
+if [ -d "$TRANSMUTE" ]; then
+	i=0
+	until docker exec transmute python3 -c 'import urllib.request as u; u.urlopen("http://localhost:3313/api/users/bootstrap-status")' >/dev/null 2>&1; do
+		i=$((i + 1)); [ $i -le 30 ] || break; sleep 2
+	done
+	if docker exec -i -e TRANSMUTE_PASSWORD="$(sed -n 's/^TRANSMUTE_PASSWORD=//p' "$ENV_FILE")" \
+		transmute python3 - < "$TRANSMUTE/make-user.py" >/dev/null 2>&1; then
+		ok "convert.lab signs you in without a password"
+	else
+		echo " ✗ couldn't make the Transmute user. See why with:"
+		echo "   docker exec -i transmute python3 - < $TRANSMUTE/make-user.py"
 	fi
 fi
 

@@ -1,9 +1,13 @@
 # Transmute: file converter (images, video, audio, docs...). Still beta.
+# No login: install.sh makes one user (make-user.py) and Caddy's convert.lab signs you in.
 services:
   transmute:
     image: ghcr.io/transmute-app/transmute:latest
     container_name: transmute
     restart: unless-stopped
+    environment:
+      AUTH_SECRET_KEY: ${TRANSMUTE_SECRET} # fixed, so sign-ins survive restarts
+      AUTH_ACCESS_TOKEN_EXPIRE_MINUTES: 525600 # a year; Caddy signs you in again before then
     volumes:
       - ./data:/app/data
     networks: [proxy]
