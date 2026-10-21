@@ -78,6 +78,12 @@
         description: live logs for every app
         server: local
         container: dozzle
+    - Glances:
+        icon: glances.png
+        href: https://top.{{HOMEPAGE_VAR_LAB_DOMAIN}}
+        description: btop in the browser
+        server: local
+        container: glances
     - Beszel:
         icon: beszel.png
         href: https://stats.{{HOMEPAGE_VAR_LAB_DOMAIN}}

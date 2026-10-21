@@ -9,6 +9,7 @@ services:
       - 443:443
     environment:
       LAB_DOMAIN: ${LAB_DOMAIN}
+      TAILSCALE_IP: ${TAILSCALE_IP}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ./data:/data
