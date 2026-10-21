@@ -1,5 +1,6 @@
-# Web terminal: https://term.lab gives you a shell on this server in the browser.
-# Every visit SSHes into the server, so it asks for your login password.
+# Web terminal: https://term.lab gives you a shell on this server in the browser, no login.
+# It SSHes in with its own key (data/id_ed25519). install.sh makes the key and adds it to
+# your authorized_keys, locked to Docker's network so it only works from this container.
 services:
   terminal:
     build: .
@@ -15,7 +16,7 @@ services:
         -t titleFixed=server
         -t fontSize=15
         -t 'theme={"background":"#11111b"}'
-        ssh -o UserKnownHostsFile=/data/known_hosts -o StrictHostKeyChecking=accept-new
+        ssh -i /data/id_ed25519 -o UserKnownHostsFile=/data/known_hosts -o StrictHostKeyChecking=accept-new
           ${SERVER_USER}@host.docker.internal
     networks: [proxy]
 

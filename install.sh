@@ -176,6 +176,24 @@ for dir in "$HOMELAB_DIR"/stacks/*/; do
 	if [ -f "$dir/compose.yaml" ]; then up "$dir"; fi
 done
 
+# term.lab logs in with its own SSH key, so there's no password prompt.
+# The key only works from Docker's network (from=), not from anywhere else.
+TERM_KEY="$HOMELAB_DIR/stacks/terminal/data/id_ed25519"
+if [ -n "$ME" ] && [ -d "$HOMELAB_DIR/stacks/terminal" ]; then
+	mkdir -p "$(dirname "$TERM_KEY")"
+	[ -f "$TERM_KEY" ] || ssh-keygen -q -t ed25519 -N "" -C homelab-terminal -f "$TERM_KEY"
+	HOME_DIR=$(getent passwd "$ME" | cut -d: -f6)
+	AUTH="$HOME_DIR/.ssh/authorized_keys"
+	mkdir -p "$HOME_DIR/.ssh"
+	if ! grep -q homelab-terminal "$AUTH" 2>/dev/null; then
+		printf 'from="172.16.0.0/12" %s\n' "$(cat "$TERM_KEY.pub")" >> "$AUTH"
+	fi
+	chown -R "$ME:" "$HOME_DIR/.ssh"
+	chmod 700 "$HOME_DIR/.ssh"
+	chmod 600 "$AUTH"
+	ok "term.lab logs you in without a password"
+fi
+
 # Beszel's agent needs the hub's public key, which the hub only makes on its first start
 BESZEL="$HOMELAB_DIR/stacks/beszel"
 if [ -d "$BESZEL" ] && ! grep -q '^BESZEL_KEY=.' "$ENV_FILE"; then
