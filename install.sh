@@ -8,6 +8,7 @@ set -eu
 HOMELAB_DIR=$(cd "$(dirname "$0")" && pwd)
 ENV_FILE="$HOMELAB_DIR/.env"
 PULL=no
+RECREATE=no
 
 for arg in "$@"; do
 	case $arg in
@@ -33,7 +34,7 @@ ME=${SUDO_USER:-${DOAS_USER:-}}
 step "packages"
 if [ "$ID" = arch ]; then
 	missing=""
-	for p in docker docker-compose tailscale git openssl openssh; do
+	for p in docker docker-compose tailscale git openssl openssh zram-generator; do
 		pacman -Q "$p" >/dev/null 2>&1 || missing="$missing $p"
 	done
 	# shellcheck disable=SC2086
@@ -104,7 +105,30 @@ LAB=$(sed -n 's/^LAB_DOMAIN=//p' "$ENV_FILE")
 ok "apps will be at *.$LAB"
 
 step "server settings"
+# Docker: cap each app's logs, and keep apps running while Docker itself restarts
+mkdir -p /etc/docker
+if ! cmp -s "$HOMELAB_DIR/system/docker-daemon.json" /etc/docker/daemon.json; then
+	cp "$HOMELAB_DIR/system/docker-daemon.json" /etc/docker/daemon.json
+	if [ "$ID" = arch ]; then systemctl restart docker; else rc-service docker restart; fi
+	i=0
+	until docker info >/dev/null 2>&1; do
+		i=$((i + 1)); [ $i -le 30 ] || die "docker didn't come back"; sleep 1
+	done
+	RECREATE=yes # the log limits only apply to apps started after this
+fi
+ok "app logs capped at 30MB each, apps survive docker restarts"
 if [ "$ID" = arch ]; then
+	install -Dm644 "$HOMELAB_DIR/system/zram-generator.conf" /etc/systemd/zram-generator.conf
+	install -Dm644 "$HOMELAB_DIR/system/sysctl-zram.conf" /etc/sysctl.d/99-zram.conf
+	sysctl -q --load=/etc/sysctl.d/99-zram.conf
+	systemctl daemon-reload
+	systemctl start systemd-zram-setup@zram0.service >/dev/null 2>&1 || true
+	ok "compressed swap in RAM (zram), tuned"
+	install -Dm644 "$HOMELAB_DIR/system/docker-prune.service" /etc/systemd/system/docker-prune.service
+	install -Dm644 "$HOMELAB_DIR/system/docker-prune.timer" /etc/systemd/system/docker-prune.timer
+	systemctl daemon-reload
+	systemctl enable --now docker-prune.timer >/dev/null 2>&1
+	ok "old app versions get cleaned up weekly"
 	install -Dm644 "$HOMELAB_DIR/system/logind-server.conf" /etc/systemd/logind.conf.d/server.conf
 	systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target >/dev/null 2>&1
 	systemctl set-default multi-user.target >/dev/null 2>&1
@@ -114,6 +138,7 @@ if [ "$ID" = arch ]; then
 	ok "lid closed keeps running, never sleeps, boots to text, screen turns off when idle"
 else
 	install -D -m 755 "$HOMELAB_DIR/system/screen-off.start" /etc/local.d/screen-off.start
+	install -D -m 755 "$HOMELAB_DIR/system/docker-prune.periodic" /etc/periodic/weekly/docker-prune
 	rc-update add local default >/dev/null 2>&1 || true
 	ok "screen turns off when idle"
 fi
@@ -127,7 +152,8 @@ up() {
 		if (
 			cd "$1"
 			if [ "$PULL" = yes ]; then docker compose pull --quiet; fi
-			docker compose up -d --build --quiet-pull --remove-orphans >/dev/null 2>&1
+			if [ "$RECREATE" = yes ]; then set -- --force-recreate; else set --; fi
+			docker compose up -d --build --quiet-pull --remove-orphans "$@" >/dev/null 2>&1
 		); then
 			ok "$name"; return 0
 		fi
