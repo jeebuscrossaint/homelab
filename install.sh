@@ -36,7 +36,7 @@ ME=${SUDO_USER:-${DOAS_USER:-}}
 step "packages"
 if [ "$ID" = arch ]; then
 	missing=""
-	for p in docker docker-compose tailscale git openssl openssh zram-generator; do
+	for p in docker docker-compose tailscale git openssl openssh zram-generator kexec-tools; do
 		pacman -Q "$p" >/dev/null 2>&1 || missing="$missing $p"
 	done
 	# shellcheck disable=SC2086
@@ -44,9 +44,9 @@ if [ "$ID" = arch ]; then
 else
 	# tailscale lives in Alpine's community repo, which is off by default
 	sed -i 's|^#\(.*/community\)$|\1|' /etc/apk/repositories
-	apk add --quiet docker docker-cli-compose tailscale git openssl openssh
+	apk add --quiet docker docker-cli-compose tailscale git openssl openssh kexec-tools
 fi
-ok "docker, tailscale, git"
+ok "docker, tailscale, git, kexec-tools"
 
 step "services"
 if [ "$ID" = arch ]; then
