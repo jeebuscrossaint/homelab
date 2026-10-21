@@ -8,7 +8,10 @@
 <script>
 (async () => {
 	try {
-		const csrf = await (await fetch('/dev/csrf')).text()
+		// Overleaf's real login page (Caddy lets it through for this header) has the token
+		const page = await (await fetch('/login', { headers: { 'X-Real-Login': '1' } })).text()
+		const csrf = new DOMParser().parseFromString(page, 'text/html')
+			.querySelector('meta[name="ol-csrfToken"]').content
 		const res = await fetch('/login', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json', Accept: 'application/json' },

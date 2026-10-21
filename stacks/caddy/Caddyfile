@@ -54,6 +54,7 @@ latex.{$LAB_DOMAIN} {
 	@login {
 		method GET
 		path /login
+		not header X-Real-Login 1
 	}
 	handle @login {
 		root * /srv/pages
