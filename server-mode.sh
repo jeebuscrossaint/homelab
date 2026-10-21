@@ -3,7 +3,7 @@
 # Run it once on the ThinkPad:  sudo bash /opt/homelab/server-mode.sh
 # Then reboot.
 #
-# Keeps: docker, tailscale, ssh, networkmanager, tlp/thermald, dev tools, CLI tools, tor, i2pd.
+# Keeps: docker, tailscale, ssh, networkmanager, tlp/thermald, dev tools, CLI tools, tor, i2pd, ffmpeg.
 # Removes: the desktop (mango), GUI apps, audio, bluetooth, themes, extra fonts.
 # Your files and app settings in ~/.config are NOT deleted.
 set -euo pipefail
@@ -35,8 +35,8 @@ THEMES_FONTS=(
   ttf-ioskeley-mono-unhinted ttf-ms-fonts ttf-neospleen-nerd-font
 )
 
-echo "== keeping tor (it's a dependency of tor browser, which is being removed)"
-pacman -D --asexplicit tor
+echo "== keeping tor and ffmpeg (tor browser and mpv pulled them in, but you still use them)"
+pacman -D --asexplicit tor ffmpeg
 
 echo "== turning off bluetooth"
 systemctl disable --now bluetooth.service || true
