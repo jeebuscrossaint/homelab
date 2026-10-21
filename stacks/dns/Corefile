@@ -1,0 +1,12 @@
+# Every name under LAB_DOMAIN (lab, pdf.lab, anything.lab) points at this ThinkPad.
+# Caddy then picks the right app by name.
+{$LAB_DOMAIN} {
+	bind {$TAILSCALE_IP}
+	template IN A {
+		answer "{{ .Name }} 60 IN A {$TAILSCALE_IP}"
+	}
+	template IN AAAA {
+		rcode NOERROR
+	}
+	errors
+}

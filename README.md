@@ -5,7 +5,8 @@ Self-hosted stuff for the ThinkPad X1 Carbon Gen 7.
 ```
 dockge/          the UI that runs everything (started by hand once)
 stacks/          one folder per app, Dockge shows each as a stack
-  caddy/         reverse proxy: pdf.<domain> -> Stirling PDF, etc.
+  dns/           tiny DNS server so names like pdf.lab point at the ThinkPad
+  caddy/         reverse proxy: pdf.lab -> Stirling PDF, etc.
   homepage/      dashboard
   uptime-kuma/   uptime monitoring
   stirling-pdf/  PDF tools
@@ -15,8 +16,8 @@ stacks/          one folder per app, Dockge shows each as a stack
 .env             your settings, shared by every stack (copy from .env.example)
 ```
 
-Only two ports are open on the laptop: 80 (Caddy) and 5001 (Dockge). Everything
-else is reached through Caddy by name.
+Ports open on the laptop: 80 (Caddy), 5001 (Dockge), and 53 on the Tailscale IP
+only (DNS). Everything else is reached through Caddy by name.
 
 ## Setup on the ThinkPad
 
@@ -41,13 +42,11 @@ else is reached through Caddy by name.
 
    ```
    cp .env.example .env
-   tailscale ip -4                   # e.g. 100.101.102.103
+   tailscale ip -4                   # put this in TAILSCALE_IP
+   openssl rand -hex 32              # put this in SEARXNG_SECRET
    ```
 
-   Set `LAB_DOMAIN` to that IP with dashes plus `.sslip.io`, like
-   `100-101-102-103.sslip.io`. sslip.io is a free DNS service that turns
-   `anything.100-101-102-103.sslip.io` into `100.101.102.103`, so you get real
-   names with no DNS setup. Set `SEARXNG_SECRET` to the output of `openssl rand -hex 32`.
+   `LAB_DOMAIN=lab` means your apps are `pdf.lab`, `home.lab`, etc.
 
 4. Create the shared network and start Dockge.
 
@@ -59,19 +58,23 @@ else is reached through Caddy by name.
 5. Open `http://<tailscale ip>:5001`, make an account, and you'll see every
    folder in `stacks/`. Start **caddy** first, then the rest.
 
-6. Open `http://home.<LAB_DOMAIN>`. That's the dashboard.
+6. Make the `.lab` names work on all your Tailscale devices: in the Tailscale
+   admin console go to **DNS**, **Add nameserver**, **Custom**, enter the
+   ThinkPad's Tailscale IP, turn on **Restrict to domain**, and type `lab`.
+
+7. Open `http://home.lab`. That's the dashboard.
 
 ## Addresses
 
 | name | app |
 |---|---|
-| `home.<LAB_DOMAIN>` | Homepage dashboard |
-| `dockge.<LAB_DOMAIN>` | Dockge |
-| `status.<LAB_DOMAIN>` | Uptime Kuma |
-| `pdf.<LAB_DOMAIN>` | Stirling PDF |
-| `convert.<LAB_DOMAIN>` | Transmute |
-| `search.<LAB_DOMAIN>` | SearXNG |
-| `changes.<LAB_DOMAIN>` | changedetection.io |
+| `home.lab` | Homepage dashboard |
+| `dockge.lab` | Dockge |
+| `status.lab` | Uptime Kuma |
+| `pdf.lab` | Stirling PDF |
+| `convert.lab` | Transmute |
+| `search.lab` | SearXNG |
+| `changes.lab` | changedetection.io |
 
 These only work from devices on your Tailscale.
 

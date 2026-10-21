@@ -1,0 +1,17 @@
+# Tiny DNS server: answers anything.lab -> this ThinkPad, so http://pdf.lab etc. work.
+# Tailscale sends .lab lookups here (admin console > DNS > split DNS for "lab").
+services:
+  dns:
+    image: coredns/coredns:1.14.7
+    container_name: dns
+    restart: unless-stopped
+    # host network so it can listen on the Tailscale IP. If Tailscale isn't up yet
+    # at boot, CoreDNS exits and Docker restarts it until it is.
+    network_mode: host
+    user: root
+    command: -conf /Corefile
+    environment:
+      TAILSCALE_IP: ${TAILSCALE_IP}
+      LAB_DOMAIN: ${LAB_DOMAIN}
+    volumes:
+      - ./Corefile:/Corefile:ro
