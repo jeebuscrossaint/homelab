@@ -25,12 +25,12 @@
         server: local
         container: changedetection
 
-    - Typst:
-        icon: mdi-sigma
-        href: https://typst.{{HOMEPAGE_VAR_LAB_DOMAIN}}
-        description: math notes and docs, live preview
+    - ExcaliDash:
+        icon: excalidraw.png
+        href: https://draw.{{HOMEPAGE_VAR_LAB_DOMAIN}}
+        description: whiteboard, keeps all your drawings
         server: local
-        container: tino
+        container: excalidash
 
 - System:
     - Terminal:

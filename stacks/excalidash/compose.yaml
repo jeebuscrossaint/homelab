@@ -1,0 +1,33 @@
+# ExcaliDash: Excalidraw with a dashboard that keeps all your drawings. https://draw.lab
+# First visit: make an account.
+services:
+  backend:
+    image: zimengxiong/excalidash-backend:latest
+    container_name: excalidash-backend
+    init: true
+    restart: unless-stopped
+    environment:
+      DATABASE_PROVIDER: sqlite
+      DATABASE_URL: file:/app/prisma/dev.db
+      PORT: "8000"
+      NODE_ENV: production
+      AUTH_MODE: local
+    volumes:
+      # named volume (not ./data) because the image keeps its database schema in this folder
+      - excalidash-data:/app/prisma
+
+  frontend:
+    image: zimengxiong/excalidash-frontend:latest
+    container_name: excalidash
+    restart: unless-stopped
+    environment:
+      BACKEND_URL: backend:8000
+    depends_on: [backend]
+    networks: [default, proxy]
+
+volumes:
+  excalidash-data:
+
+networks:
+  proxy:
+    external: true
