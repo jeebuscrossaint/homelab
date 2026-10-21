@@ -14,10 +14,10 @@ services:
     command: >
       ttyd --writable
         -t titleFixed=server
-        -t fontSize=15
-        -t 'fontFamily="JetBrainsMono Nerd Font", "JetBrains Mono", monospace'
-        -t cursorBlink=true
-        -t 'theme={"background":"#1e1e2e","foreground":"#cdd6f4","cursor":"#f5e0dc","selectionBackground":"#585b70","black":"#45475a","red":"#f38ba8","green":"#a6e3a1","yellow":"#f9e2af","blue":"#89b4fa","magenta":"#f5c2e7","cyan":"#94e2d5","white":"#bac2de","brightBlack":"#585b70","brightRed":"#f38ba8","brightGreen":"#a6e3a1","brightYellow":"#f9e2af","brightBlue":"#89b4fa","brightMagenta":"#f5c2e7","brightCyan":"#94e2d5","brightWhite":"#a6adc8"}'
+        -t fontSize=16
+        -t fontFamily=monospace
+        -t cursorStyle=block
+        -t 'theme={"background":"#000000","foreground":"#aaaaaa","cursor":"#aaaaaa","black":"#000000","red":"#aa0000","green":"#00aa00","yellow":"#aa5500","blue":"#0000aa","magenta":"#aa00aa","cyan":"#00aaaa","white":"#aaaaaa","brightBlack":"#555555","brightRed":"#ff5555","brightGreen":"#55ff55","brightYellow":"#ffff55","brightBlue":"#5555ff","brightMagenta":"#ff55ff","brightCyan":"#55ffff","brightWhite":"#ffffff"}'
         ssh -i /data/id_ed25519 -o UserKnownHostsFile=/data/known_hosts -o StrictHostKeyChecking=accept-new
           ${SERVER_USER}@host.docker.internal
     networks: [proxy]
