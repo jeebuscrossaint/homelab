@@ -56,6 +56,7 @@ A new server makes a new certificate, so you'd do this again after moving.
 | `convert.lab` | Transmute (file converter) |
 | `search.lab` | SearXNG |
 | `changes.lab` | changedetection.io |
+| `ntfy.lab` | phone notifications (apps on the server post to `http://ntfy/<topic>`) |
 | `term.lab` | terminal on the server (asks for your password) |
 
 ## What's where

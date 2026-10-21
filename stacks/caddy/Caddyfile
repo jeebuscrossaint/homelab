@@ -48,3 +48,7 @@ changes.{$LAB_DOMAIN} {
 term.{$LAB_DOMAIN} {
 	reverse_proxy terminal:7681
 }
+
+ntfy.{$LAB_DOMAIN} {
+	reverse_proxy ntfy:80
+}
