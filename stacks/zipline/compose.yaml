@@ -1,7 +1,9 @@
 # Zipline: upload files at https://share.lab, send anyone the public link.
 # Public links work for people NOT on your Tailscale through Tailscale Funnel, which
-# forwards https://<PUBLIC_DOMAIN> to port 3001 here. Turn it on once with:
-#   sudo tailscale funnel --bg 3001
+# forwards https://<PUBLIC_DOMAIN>:8443 to port 3001 here. Turn it on once with:
+#   sudo tailscale funnel --bg --https=8443 3001
+# NOT on the default port 443: Funnel would take over 443 on the Tailscale IP and
+# break every .lab site, since Caddy serves those on 443.
 # First visit to share.lab: make your account (registration is off after that).
 services:
   zipline:
@@ -14,7 +16,7 @@ services:
       DATABASE_URL: pglite:///zipline/database
       CORE_SECRET: ${ZIPLINE_SECRET}
       CORE_RETURN_HTTPS_URLS: "true"
-      CORE_DEFAULT_DOMAIN: ${PUBLIC_DOMAIN}
+      CORE_DEFAULT_DOMAIN: ${PUBLIC_DOMAIN}:8443
       CORE_TRUST_PROXY: "true"
       CORE_TRUSTED_PROXIES: 172.16.0.0/12,127.0.0.1,::1 # Caddy and Funnel
       FEATURES_USER_REGISTRATION: "false"

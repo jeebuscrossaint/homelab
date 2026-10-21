@@ -197,5 +197,6 @@ cat <<MSG
    then turn on "Restrict to domain" and type: $LAB
 
    To make Zipline's share links work for people outside your Tailscale, run once:
-   sudo tailscale funnel --bg 3001
+   sudo tailscale funnel --bg --https=8443 3001
+   (not plain --bg 3001: that takes port 443 and breaks every .$LAB site)
 MSG
