@@ -1,6 +1,6 @@
 # Snowflake proxy: helps people in censored countries reach Tor. Not a relay or exit,
-# works behind campus wifi, nothing to open. See how many people it helped:
-#   docker logs snowflake | grep "In the last"
+# works behind campus wifi, nothing to open. The dashboard tile shows how many it's helped
+# (from snowflake-stats below); raw numbers: docker logs snowflake | grep "In the last"
 services:
   snowflake:
     image: thetorproject/snowflake-proxy:v2.15.2
@@ -8,3 +8,17 @@ services:
     restart: unless-stopped
     network_mode: host
     command: ["-summary-interval", "1h", "-metrics", "-metrics-address", "127.0.0.1"]
+
+  # reads Snowflake's counters, keeps all-time totals, serves them as JSON for Homepage
+  # on the Tailscale IP only (restarts until Tailscale is up at boot)
+  snowflake-stats:
+    image: busybox:1.37
+    container_name: snowflake-stats
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      LISTEN: ${TAILSCALE_IP}:9998
+    command: ["sh", "/stats.sh"]
+    volumes:
+      - ./stats.sh:/stats.sh:ro
+      - ./data:/data
