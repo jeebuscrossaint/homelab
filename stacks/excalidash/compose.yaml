@@ -12,6 +12,8 @@ services:
       PORT: "8000"
       NODE_ENV: production
       AUTH_MODE: local
+      # must match the address you open, or logins fail with "Origin not allowed"
+      FRONTEND_URL: https://draw.${LAB_DOMAIN}
     volumes:
       # named volume (not ./data) because the image keeps its database schema in this folder
       - excalidash-data:/app/prisma
