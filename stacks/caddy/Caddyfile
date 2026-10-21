@@ -56,3 +56,7 @@ draw.{$LAB_DOMAIN} {
 latex.{$LAB_DOMAIN} {
 	reverse_proxy overleaf:80
 }
+
+stats.{$LAB_DOMAIN} {
+	reverse_proxy beszel:8090
+}

@@ -52,6 +52,12 @@
         description: start, stop, edit stacks
         server: local
         container: dockge
+    - Beszel:
+        icon: beszel.png
+        href: https://stats.{{HOMEPAGE_VAR_LAB_DOMAIN}}
+        description: CPU, RAM, temps, containers
+        server: local
+        container: beszel
     - Uptime Kuma:
         icon: uptime-kuma.png
         href: https://status.{{HOMEPAGE_VAR_LAB_DOMAIN}}

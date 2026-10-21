@@ -1,0 +1,32 @@
+# Beszel: live graphs of CPU, RAM, disk, temps and every container. https://stats.lab
+# First visit: make an account, then Add System with Host = /beszel_socket/beszel.sock
+# (install.sh fills in BESZEL_KEY for the agent from the hub's key).
+services:
+  beszel:
+    image: henrygd/beszel:latest
+    container_name: beszel
+    restart: unless-stopped
+    environment:
+      APP_URL: https://stats.${LAB_DOMAIN}
+    volumes:
+      - ./data/hub:/beszel_data
+      - ./data/socket:/beszel_socket
+    networks: [proxy]
+
+  # the agent reads this machine's stats; host network so it sees the real network traffic
+  beszel-agent:
+    image: henrygd/beszel-agent:latest
+    container_name: beszel-agent
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      LISTEN: /beszel_socket/beszel.sock
+      KEY: ${BESZEL_KEY:-}
+    volumes:
+      - ./data/agent:/var/lib/beszel-agent
+      - ./data/socket:/beszel_socket
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+networks:
+  proxy:
+    external: true

@@ -136,6 +136,17 @@ for dir in "$HOMELAB_DIR"/stacks/*/; do
 	if [ -f "$dir/compose.yaml" ]; then up "$dir"; fi
 done
 
+# Beszel's agent needs the hub's public key, which the hub only makes on its first start
+BESZEL="$HOMELAB_DIR/stacks/beszel"
+if [ -d "$BESZEL" ] && ! grep -q '^BESZEL_KEY=.' "$ENV_FILE"; then
+	i=0
+	while [ ! -f "$BESZEL/data/hub/id_ed25519" ] && [ $i -lt 30 ]; do i=$((i + 1)); sleep 1; done
+	if [ -f "$BESZEL/data/hub/id_ed25519" ]; then
+		set_env BESZEL_KEY "$(ssh-keygen -y -f "$BESZEL/data/hub/id_ed25519")"
+		up "$BESZEL"
+	fi
+fi
+
 step "done"
 cat <<MSG
    Dashboard: https://home.$LAB
