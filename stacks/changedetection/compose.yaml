@@ -5,7 +5,7 @@ services:
     container_name: changedetection
     restart: unless-stopped
     environment:
-      BASE_URL: http://changes.${LAB_DOMAIN}
+      BASE_URL: https://changes.${LAB_DOMAIN}
     volumes:
       - ./data:/datastore
     networks: [proxy]

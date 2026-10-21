@@ -1,7 +1,7 @@
 # homelab
 
 Fresh Arch or Alpine install → one command → all the apps running, reachable at
-`http://<app>.lab` from any device on your Tailscale.
+`https://<app>.lab` from any device on your Tailscale.
 
 ## New server
 
@@ -29,6 +29,21 @@ updates the apps to their newest versions.
 Go to the Tailscale admin console, then **DNS**, **Add nameserver**, **Custom**,
 and enter the server's Tailscale IP (the script prints it). Turn on **Restrict to
 domain** and type `lab`.
+
+## HTTPS: trust the certificate once per device
+
+Caddy makes its own certificates, so each device needs to trust it once. On the
+device, open **http://ca.lab** to download `homelab-ca.crt`, then:
+
+- **Arch / Linux:** `sudo trust anchor --store homelab-ca.crt` (Firefox and Chromium pick it up)
+- **Windows:** double-click it, **Install Certificate**, **Local Machine**,
+  **Trusted Root Certification Authorities**
+- **iPhone:** open the downloaded profile in Settings and install it. Then go to
+  **General**, **About**, **Certificate Trust Settings** and turn it on.
+- **Android:** **Settings**, **Security**, **Encryption & credentials**,
+  **Install a certificate**, **CA certificate**
+
+A new server makes a new certificate, so you'd do this again after moving.
 
 ## Apps
 

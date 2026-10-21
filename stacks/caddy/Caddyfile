@@ -1,31 +1,46 @@
-# One block per app: http://<name>.{$LAB_DOMAIN} -> <container name>:<port inside container>
+# One block per app: <name>.{$LAB_DOMAIN} -> <container name>:<port inside container>
 # After editing, restart the caddy stack in Dockge.
-# Plain http is fine here because only your Tailscale devices can reach it.
+#
+# HTTPS uses Caddy's own certificate authority. Each device trusts it once:
+# download http://ca.lab and install it (see README).
+{
+	local_certs
+	skip_install_trust
+}
 
-http://{$LAB_DOMAIN}, http://home.{$LAB_DOMAIN} {
+# The one page that stays plain http, so a new device can download the certificate.
+# Only ever hands out root.crt, never anything else in that folder.
+http://ca.{$LAB_DOMAIN} {
+	root * /data/caddy/pki/authorities/local
+	rewrite * /root.crt
+	header Content-Disposition "attachment; filename=homelab-ca.crt"
+	file_server
+}
+
+{$LAB_DOMAIN}, home.{$LAB_DOMAIN} {
 	reverse_proxy homepage:3000
 }
 
-http://dockge.{$LAB_DOMAIN} {
+dockge.{$LAB_DOMAIN} {
 	reverse_proxy dockge:5001
 }
 
-http://status.{$LAB_DOMAIN} {
+status.{$LAB_DOMAIN} {
 	reverse_proxy uptime-kuma:3001
 }
 
-http://pdf.{$LAB_DOMAIN} {
+pdf.{$LAB_DOMAIN} {
 	reverse_proxy stirling-pdf:8080
 }
 
-http://convert.{$LAB_DOMAIN} {
+convert.{$LAB_DOMAIN} {
 	reverse_proxy transmute:3313
 }
 
-http://search.{$LAB_DOMAIN} {
+search.{$LAB_DOMAIN} {
 	reverse_proxy searxng:8080
 }
 
-http://changes.{$LAB_DOMAIN} {
+changes.{$LAB_DOMAIN} {
 	reverse_proxy changedetection:5000
 }

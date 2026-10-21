@@ -137,7 +137,8 @@ done
 
 step "done"
 cat <<MSG
-   Dashboard: http://home.$LAB
+   Dashboard: https://home.$LAB
+   On each device, trust the certificate once: open http://ca.$LAB (see README)
 
    If this is a new server (or its Tailscale IP changed), point .$LAB at it once:
    Tailscale admin > DNS > Add nameserver > Custom > $TS_IP

@@ -4,5 +4,5 @@
     disk: /
 - search:
     provider: custom
-    url: http://search.{{HOMEPAGE_VAR_LAB_DOMAIN}}/search?q=
+    url: https://search.{{HOMEPAGE_VAR_LAB_DOMAIN}}/search?q=
     target: _blank

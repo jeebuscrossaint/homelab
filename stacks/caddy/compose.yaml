@@ -1,4 +1,4 @@
-# Caddy: turns pdf.<LAB_DOMAIN> etc. into the right container. Edit Caddyfile to add sites.
+# Caddy: turns https://pdf.lab etc. into the right container. Edit Caddyfile to add sites.
 services:
   caddy:
     image: caddy:2
@@ -6,6 +6,7 @@ services:
     restart: unless-stopped
     ports:
       - 80:80
+      - 443:443
     environment:
       LAB_DOMAIN: ${LAB_DOMAIN}
     volumes:
