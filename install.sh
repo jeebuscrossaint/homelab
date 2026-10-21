@@ -145,6 +145,14 @@ ok "app logs capped at 30MB each, apps survive docker restarts"
 install -D -m 644 "$HOMELAB_DIR/system/sysctl-tailscale-bind.conf" /etc/sysctl.d/99-tailscale-bind.conf
 sysctl -q -p /etc/sysctl.d/99-tailscale-bind.conf
 ok "apps listen on Tailscale only, even when Docker starts first at boot"
+# SSH: no passwords; your devices get in through Tailscale SSH instead
+grep -q '^Include /etc/ssh/sshd_config.d/\*\.conf' /etc/ssh/sshd_config ||
+	sed -i '1i Include /etc/ssh/sshd_config.d/*.conf' /etc/ssh/sshd_config
+install -D -m 644 "$HOMELAB_DIR/system/sshd-no-passwords.conf" /etc/ssh/sshd_config.d/10-no-passwords.conf
+sshd -t || die "the SSH settings don't check out (sshd -t), not reloading SSH"
+if [ "$ID" = arch ]; then systemctl reload sshd; else rc-service sshd reload >/dev/null; fi
+tailscale set --ssh
+ok "SSH takes keys only; ssh from your devices goes through Tailscale SSH"
 if [ "$ID" = arch ]; then
 	install -Dm644 "$HOMELAB_DIR/system/zram-generator.conf" /etc/systemd/zram-generator.conf
 	install -Dm644 "$HOMELAB_DIR/system/sysctl-zram.conf" /etc/sysctl.d/99-zram.conf
