@@ -25,10 +25,6 @@ dockge.{$LAB_DOMAIN} {
 	reverse_proxy dockge:5001
 }
 
-status.{$LAB_DOMAIN} {
-	reverse_proxy uptime-kuma:3001
-}
-
 pdf.{$LAB_DOMAIN} {
 	reverse_proxy stirling-pdf:8080
 }

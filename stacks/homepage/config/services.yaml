@@ -58,9 +58,3 @@
         description: CPU, RAM, temps, containers
         server: local
         container: beszel
-    - Uptime Kuma:
-        icon: uptime-kuma.png
-        href: https://status.{{HOMEPAGE_VAR_LAB_DOMAIN}}
-        description: is everything up
-        server: local
-        container: uptime-kuma
