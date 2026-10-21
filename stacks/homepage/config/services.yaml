@@ -26,6 +26,12 @@
         container: changedetection
 
 - System:
+    - Terminal:
+        icon: mdi-console
+        href: https://term.{{HOMEPAGE_VAR_LAB_DOMAIN}}
+        description: a shell on the server, in the browser
+        server: local
+        container: terminal
     - Dockge:
         icon: dockge.png
         href: https://dockge.{{HOMEPAGE_VAR_LAB_DOMAIN}}

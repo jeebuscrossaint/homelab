@@ -1,0 +1,24 @@
+# Web terminal: https://term.lab gives you a shell on this server in the browser.
+# Every visit SSHes into the server, so it asks for your login password.
+services:
+  terminal:
+    build: .
+    image: homelab-terminal
+    container_name: terminal
+    restart: unless-stopped
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    volumes:
+      - ./data:/data
+    command: >
+      ttyd --writable
+        -t titleFixed=server
+        -t fontSize=15
+        -t 'theme={"background":"#11111b"}'
+        ssh -o UserKnownHostsFile=/data/known_hosts -o StrictHostKeyChecking=accept-new
+          ${SERVER_USER}@host.docker.internal
+    networks: [proxy]
+
+networks:
+  proxy:
+    external: true

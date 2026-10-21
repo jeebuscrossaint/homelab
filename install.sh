@@ -33,7 +33,7 @@ ME=${SUDO_USER:-${DOAS_USER:-}}
 step "packages"
 if [ "$ID" = arch ]; then
 	missing=""
-	for p in docker docker-compose tailscale git openssl; do
+	for p in docker docker-compose tailscale git openssl openssh; do
 		pacman -Q "$p" >/dev/null 2>&1 || missing="$missing $p"
 	done
 	# shellcheck disable=SC2086
@@ -41,15 +41,15 @@ if [ "$ID" = arch ]; then
 else
 	# tailscale lives in Alpine's community repo, which is off by default
 	sed -i 's|^#\(.*/community\)$|\1|' /etc/apk/repositories
-	apk add --quiet docker docker-cli-compose tailscale git openssl
+	apk add --quiet docker docker-cli-compose tailscale git openssl openssh
 fi
 ok "docker, tailscale, git"
 
 step "services"
 if [ "$ID" = arch ]; then
-	systemctl enable --now docker.service tailscaled.service >/dev/null 2>&1
+	systemctl enable --now docker.service tailscaled.service sshd.service >/dev/null 2>&1
 else
-	for s in docker tailscale; do
+	for s in docker tailscale sshd; do
 		rc-update add "$s" default >/dev/null 2>&1 || true
 		rc-service "$s" status >/dev/null 2>&1 || rc-service "$s" start
 	done
@@ -61,7 +61,7 @@ done
 if [ -n "$ME" ]; then
 	if [ "$ID" = arch ]; then usermod -aG docker "$ME"; else addgroup "$ME" docker 2>/dev/null || true; fi
 fi
-ok "docker and tailscale start on boot"
+ok "docker, tailscale and ssh start on boot"
 
 step "tailscale"
 i=0
@@ -87,6 +87,7 @@ set_env() {
 grep -q '^LAB_DOMAIN=.' "$ENV_FILE" || set_env LAB_DOMAIN lab
 set_env TAILSCALE_IP "$TS_IP"
 set_env HOMELAB_DIR "$HOMELAB_DIR"
+[ -z "$ME" ] || set_env SERVER_USER "$ME"
 if grep -q '^SEARXNG_SECRET=change-me' "$ENV_FILE"; then
 	set_env SEARXNG_SECRET "$(openssl rand -hex 32)"
 fi
@@ -118,7 +119,7 @@ up() {
 		if (
 			cd "$1"
 			if [ "$PULL" = yes ]; then docker compose pull --quiet; fi
-			docker compose up -d --quiet-pull --remove-orphans >/dev/null 2>&1
+			docker compose up -d --build --quiet-pull --remove-orphans >/dev/null 2>&1
 		); then
 			ok "$name"; return 0
 		fi

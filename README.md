@@ -56,6 +56,7 @@ A new server makes a new certificate, so you'd do this again after moving.
 | `convert.lab` | Transmute (file converter) |
 | `search.lab` | SearXNG |
 | `changes.lab` | changedetection.io |
+| `term.lab` | terminal on the server (asks for your password) |
 
 ## What's where
 
