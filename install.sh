@@ -88,9 +88,17 @@ grep -q '^LAB_DOMAIN=.' "$ENV_FILE" || set_env LAB_DOMAIN lab
 set_env TAILSCALE_IP "$TS_IP"
 set_env HOMELAB_DIR "$HOMELAB_DIR"
 [ -z "$ME" ] || set_env SERVER_USER "$ME"
-if grep -q '^SEARXNG_SECRET=change-me' "$ENV_FILE"; then
-	set_env SEARXNG_SECRET "$(openssl rand -hex 32)"
-fi
+# any setting still set to change-me is a secret: give it a random value
+for key in $(sed -n 's/^\([A-Z_]*\)=change-me$/\1/p' "$ENV_FILE"); do
+	set_env "$key" "$(openssl rand -hex 32)"
+done
+# settings added to .env.example after .env was made
+for key in $(sed -n 's/^\([A-Z_]*\)=.*/\1/p' "$HOMELAB_DIR/.env.example"); do
+	grep -q "^$key=" "$ENV_FILE" && continue
+	val=$(sed -n "s/^$key=//p" "$HOMELAB_DIR/.env.example")
+	[ "$val" = change-me ] && val=$(openssl rand -hex 32)
+	set_env "$key" "$val"
+done
 chown "$(stat -c %u:%g "$HOMELAB_DIR")" "$ENV_FILE"
 LAB=$(sed -n 's/^LAB_DOMAIN=//p' "$ENV_FILE")
 ok "apps will be at *.$LAB"
