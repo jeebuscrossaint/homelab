@@ -1,0 +1,29 @@
+<!doctype html>
+<!-- Caddy shows this instead of Overleaf's login page and signs you in as the one user.
+     install.sh makes that user with OVERLEAF_PASSWORD. -->
+<meta charset="utf-8">
+<title>Overleaf</title>
+<body style="background:#fff;font:16px sans-serif;padding:2em">
+<p id="msg">Signing in…</p>
+<script>
+(async () => {
+	try {
+		const csrf = await (await fetch('/dev/csrf')).text()
+		const res = await fetch('/login', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+			body: JSON.stringify({
+				_csrf: csrf,
+				email: 'me@{{env "LAB_DOMAIN"}}.local',
+				password: '{{env "OVERLEAF_PASSWORD"}}',
+			}),
+		})
+		const body = await res.json().catch(() => ({}))
+		if (!res.ok) throw new Error(body.message?.text || res.status)
+		location.replace(body.redir || '/project')
+	} catch (err) {
+		document.getElementById('msg').textContent =
+			"Couldn't sign in (" + err.message + '). Run sudo ./install.sh on the server to make the Overleaf user.'
+	}
+})()
+</script>

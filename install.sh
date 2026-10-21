@@ -205,6 +205,24 @@ if [ -d "$BESZEL" ] && ! grep -q '^BESZEL_KEY=.' "$ENV_FILE"; then
 	fi
 fi
 
+# Overleaf: one admin user that latex.lab signs you in as (Caddy serves the sign-in page)
+OVERLEAF="$HOMELAB_DIR/stacks/overleaf"
+if [ -d "$OVERLEAF" ]; then
+	i=0
+	until docker exec overleaf curl -fs http://localhost/status >/dev/null 2>&1; do
+		i=$((i + 1)); [ $i -le 60 ] || break; sleep 2
+	done
+	if docker exec -i -w /overleaf/services/web \
+		-e OVERLEAF_EMAIL="me@$LAB.local" \
+		-e OVERLEAF_PASSWORD="$(sed -n 's/^OVERLEAF_PASSWORD=//p' "$ENV_FILE")" \
+		overleaf node --input-type=module < "$OVERLEAF/make-user.mjs" >/dev/null 2>&1; then
+		ok "latex.lab signs you in without a password"
+	else
+		echo " ✗ couldn't make the Overleaf user. See why with:"
+		echo "   docker exec -i -w /overleaf/services/web overleaf node --input-type=module < $OVERLEAF/make-user.mjs"
+	fi
+fi
+
 step "done"
 cat <<MSG
    Dashboard: https://home.$LAB

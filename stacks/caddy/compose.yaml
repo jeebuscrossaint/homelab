@@ -10,8 +10,10 @@ services:
     environment:
       LAB_DOMAIN: ${LAB_DOMAIN}
       TAILSCALE_IP: ${TAILSCALE_IP}
+      OVERLEAF_PASSWORD: ${OVERLEAF_PASSWORD}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./pages:/srv/pages:ro
       - ./data:/data
     networks: [proxy]
 

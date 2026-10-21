@@ -1,5 +1,6 @@
 # Overleaf: LaTeX editor with autocomplete and live PDF. https://latex.lab
-# First time: open https://latex.lab/launchpad to make your admin account.
+# No login: install.sh makes one admin user (make-user.mjs) and Caddy's latex.lab
+# login page signs you in as it (Tailscale-only, so that's fine).
 services:
   overleaf:
     image: sharelatex/sharelatex:6.3.1

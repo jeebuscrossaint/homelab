@@ -50,6 +50,18 @@ draw.{$LAB_DOMAIN} {
 }
 
 latex.{$LAB_DOMAIN} {
+	# no login screen: this page signs you in as the one user (see pages/latex-login.html)
+	@login {
+		method GET
+		path /login
+	}
+	handle @login {
+		root * /srv/pages
+		rewrite * /latex-login.html
+		header Cache-Control no-store
+		templates
+		file_server
+	}
 	reverse_proxy overleaf:80
 }
 
