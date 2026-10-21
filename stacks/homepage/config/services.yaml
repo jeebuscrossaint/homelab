@@ -39,6 +39,13 @@
         server: local
         container: overleaf
 
+    - Karakeep:
+        icon: karakeep.png
+        href: https://keep.{{HOMEPAGE_VAR_LAB_DOMAIN}}
+        description: bookmarks with saved copies, searchable
+        server: local
+        container: karakeep
+
 - System:
     - Terminal:
         icon: mdi-console

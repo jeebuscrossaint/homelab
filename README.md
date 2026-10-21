@@ -57,6 +57,7 @@ A new server makes a new certificate, so you'd do this again after moving.
 | `search.lab` | SearXNG |
 | `changes.lab` | changedetection.io |
 | `latex.lab` | Overleaf: LaTeX with autocomplete (first time: `latex.lab/launchpad`) |
+| `keep.lab` | Karakeep: bookmarks that keep a copy of the page |
 | `draw.lab` | ExcaliDash: Excalidraw that keeps all your drawings |
 | `term.lab` | terminal on the server (asks for your password) |
 

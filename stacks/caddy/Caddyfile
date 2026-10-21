@@ -56,3 +56,7 @@ latex.{$LAB_DOMAIN} {
 stats.{$LAB_DOMAIN} {
 	reverse_proxy beszel:8090
 }
+
+keep.{$LAB_DOMAIN} {
+	reverse_proxy karakeep:3000
+}
