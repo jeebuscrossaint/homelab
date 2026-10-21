@@ -5,7 +5,7 @@ headerStyle: clean
 layout:
   Tools:
     style: row
-    columns: 4
+    columns: 3
   System:
     style: row
     columns: 4

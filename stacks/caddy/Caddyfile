@@ -68,3 +68,7 @@ tools.{$LAB_DOMAIN} {
 logs.{$LAB_DOMAIN} {
 	reverse_proxy dozzle:8080
 }
+
+share.{$LAB_DOMAIN} {
+	reverse_proxy zipline:3000
+}

@@ -46,6 +46,12 @@
         server: local
         container: karakeep
 
+    - Zipline:
+        icon: zipline.png
+        href: https://share.{{HOMEPAGE_VAR_LAB_DOMAIN}}
+        description: upload a file, send anyone the link
+        server: local
+        container: zipline
     - IT-Tools:
         icon: it-tools.png
         href: https://tools.{{HOMEPAGE_VAR_LAB_DOMAIN}}

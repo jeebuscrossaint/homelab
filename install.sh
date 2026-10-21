@@ -90,6 +90,10 @@ set_env() {
 grep -q '^LAB_DOMAIN=.' "$ENV_FILE" || set_env LAB_DOMAIN lab
 set_env TAILSCALE_IP "$TS_IP"
 set_env HOMELAB_DIR "$HOMELAB_DIR"
+# this machine's public Tailscale Funnel address, e.g. server.tail1234.ts.net
+TS_NAME=$(tailscale status --peers=false | awk 'NR == 1 { print $2 }')
+TS_SUFFIX=$(tailscale status --json | sed -n 's/.*"MagicDNSSuffix": *"\([^"]*\)".*/\1/p' | head -n 1)
+[ -z "$TS_SUFFIX" ] || set_env PUBLIC_DOMAIN "$TS_NAME.$TS_SUFFIX"
 [ -z "$ME" ] || set_env SERVER_USER "$ME"
 # any setting still set to change-me is a secret: give it a random value
 for key in $(sed -n 's/^\([A-Z_]*\)=change-me$/\1/p' "$ENV_FILE"); do
@@ -191,4 +195,7 @@ cat <<MSG
    If this is a new server (or its Tailscale IP changed), point .$LAB at it once:
    Tailscale admin > DNS > Add nameserver > Custom > $TS_IP
    then turn on "Restrict to domain" and type: $LAB
+
+   To make Zipline's share links work for people outside your Tailscale, run once:
+   sudo tailscale funnel --bg 3001
 MSG

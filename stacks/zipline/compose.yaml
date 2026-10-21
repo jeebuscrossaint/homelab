@@ -1,0 +1,28 @@
+# Zipline: upload files at https://share.lab, send anyone the public link.
+# Public links work for people NOT on your Tailscale through Tailscale Funnel, which
+# forwards https://<PUBLIC_DOMAIN> to port 3001 here. Turn it on once with:
+#   sudo tailscale funnel --bg 3001
+# First visit to share.lab: make your account (registration is off after that).
+services:
+  zipline:
+    image: ghcr.io/diced/zipline:v4.8.0
+    container_name: zipline
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:3001:3000 # only for Funnel, not reachable from the network
+    environment:
+      DATABASE_URL: pglite:///zipline/database
+      CORE_SECRET: ${ZIPLINE_SECRET}
+      CORE_RETURN_HTTPS_URLS: "true"
+      CORE_DEFAULT_DOMAIN: ${PUBLIC_DOMAIN}
+      CORE_TRUST_PROXY: "true"
+      FEATURES_USER_REGISTRATION: "false"
+      FILES_MAX_FILE_SIZE: 1gb
+    volumes:
+      - ./data/uploads:/zipline/uploads
+      - ./data/database:/zipline/database
+    networks: [proxy]
+
+networks:
+  proxy:
+    external: true
