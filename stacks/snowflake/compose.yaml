@@ -7,4 +7,4 @@ services:
     container_name: snowflake
     restart: unless-stopped
     network_mode: host
-    command: ["-summary-interval", "1h"]
+    command: ["-summary-interval", "1h", "-metrics", "-metrics-address", "127.0.0.1"]
