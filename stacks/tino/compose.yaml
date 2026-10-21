@@ -3,8 +3,9 @@
 services:
   # TINO runs as user 1234, so hand it the data folder first (fresh servers make it as root)
   tino-init:
-    image: busybox:1.37
-    command: chown -R 1234:1234 /data
+    image: ghcr.io/confirm/tino:latest
+    user: root
+    entrypoint: ["chown", "-R", "1234:1234", "/data"]
     volumes:
       - ./data:/data
 
