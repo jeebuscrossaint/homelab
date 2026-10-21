@@ -1,6 +1,6 @@
 # Beszel: live graphs of CPU, RAM, disk, temps and every container. https://stats.lab
-# First visit: make an account, then Add System with Host = /beszel_socket/beszel.sock
-# (install.sh fills in BESZEL_KEY for the agent from the hub's key).
+# No login: it makes one user and logs you in automatically (Tailscale-only, so that's fine).
+# config.yml adds this machine, and install.sh hands the agent the hub's key (BESZEL_KEY).
 services:
   beszel:
     image: henrygd/beszel:latest
@@ -8,8 +8,12 @@ services:
     restart: unless-stopped
     environment:
       APP_URL: https://stats.${LAB_DOMAIN}
+      USER_EMAIL: me@${LAB_DOMAIN}.local
+      USER_PASSWORD: ${BESZEL_PASSWORD}
+      AUTO_LOGIN: me@${LAB_DOMAIN}.local
     volumes:
       - ./data/hub:/beszel_data
+      - ./config.yml:/beszel_data/config.yml:ro
       - ./data/socket:/beszel_socket
     networks: [proxy]
 

@@ -1,0 +1,7 @@
+# Systems Beszel watches. This one is the server itself, through the agent's socket.
+systems:
+  - name: server
+    host: /beszel_socket/beszel.sock
+    port: 45876
+    users:
+      - me@lab.local

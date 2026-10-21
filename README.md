@@ -52,7 +52,7 @@ A new server makes a new certificate, so you'd do this again after moving.
 | `home.lab` | Homepage dashboard |
 | `dockge.lab` | Dockge: start, stop and edit apps |
 | `status.lab` | Uptime Kuma |
-| `stats.lab` | Beszel: CPU, RAM, temps (first time: Add System, host `/beszel_socket/beszel.sock`) |
+| `stats.lab` | Beszel: CPU, RAM, temps |
 | `pdf.lab` | Stirling PDF |
 | `convert.lab` | Transmute (file converter) |
 | `search.lab` | SearXNG |
