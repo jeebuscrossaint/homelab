@@ -25,6 +25,13 @@
         server: local
         container: changedetection
 
+    - Typst:
+        icon: mdi-sigma
+        href: https://typst.{{HOMEPAGE_VAR_LAB_DOMAIN}}
+        description: math notes and docs, live preview
+        server: local
+        container: tino
+
 - System:
     - Terminal:
         icon: mdi-console

@@ -1,0 +1,17 @@
+# TINO: Typst editor in the browser with live preview. https://typst.lab
+# Login is turned off since only your Tailscale devices can reach it.
+services:
+  tino:
+    image: ghcr.io/confirm/tino:latest
+    container_name: tino
+    restart: unless-stopped
+    environment:
+      TINO_AUTH_DISABLED: "true"
+      TINO_BASE_URL: https://typst.${LAB_DOMAIN}
+    volumes:
+      - ./data:/data
+    networks: [proxy]
+
+networks:
+  proxy:
+    external: true
