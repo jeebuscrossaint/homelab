@@ -66,6 +66,12 @@
         description: start, stop, edit stacks
         server: local
         container: dockge
+    - Dozzle:
+        icon: dozzle.png
+        href: https://logs.{{HOMEPAGE_VAR_LAB_DOMAIN}}
+        description: live logs for every app
+        server: local
+        container: dozzle
     - Beszel:
         icon: beszel.png
         href: https://stats.{{HOMEPAGE_VAR_LAB_DOMAIN}}
