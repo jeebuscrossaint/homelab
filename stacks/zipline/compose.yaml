@@ -5,7 +5,7 @@
 # First visit to share.lab: make your account (registration is off after that).
 services:
   zipline:
-    image: ghcr.io/diced/zipline:v4.8.0
+    image: ghcr.io/diced/zipline:v4
     container_name: zipline
     restart: unless-stopped
     ports:
