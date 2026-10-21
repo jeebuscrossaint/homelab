@@ -60,3 +60,7 @@ stats.{$LAB_DOMAIN} {
 keep.{$LAB_DOMAIN} {
 	reverse_proxy karakeep:3000
 }
+
+tools.{$LAB_DOMAIN} {
+	reverse_proxy it-tools:80
+}

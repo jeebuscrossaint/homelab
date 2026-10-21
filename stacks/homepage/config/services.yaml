@@ -19,7 +19,7 @@
         server: local
         container: searxng
     - Changedetection:
-        icon: changedetection-io.png
+        icon: changedetection.png
         href: https://changes.{{HOMEPAGE_VAR_LAB_DOMAIN}}
         description: get pinged when a website changes
         server: local
@@ -45,6 +45,13 @@
         description: bookmarks with saved copies, searchable
         server: local
         container: karakeep
+
+    - IT-Tools:
+        icon: it-tools.png
+        href: https://tools.{{HOMEPAGE_VAR_LAB_DOMAIN}}
+        description: converters, encoders, QR codes, hashes
+        server: local
+        container: it-tools
 
 - System:
     - Terminal:
