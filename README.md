@@ -70,12 +70,9 @@ that helps people in censored countries reach Tor.
 
 ## Rebooting fast
 
-Skip the firmware and boot straight into the kernel (picks up a kernel update):
-
-```
-sudo kexec -l /boot/vmlinuz-linux --initrd=/boot/initramfs-linux.img --reuse-cmdline
-sudo systemctl kexec
-```
+`sudo kexec-reboot` skips the firmware and boots straight into the installed kernel
+(so it picks up a kernel update). It's `system/kexec-reboot`, which install.sh puts in
+`/usr/local/bin` on Arch.
 
 Or restart everything but the kernel: `sudo systemctl soft-reboot`. If the server
 doesn't come back on Tailscale after a kexec (Wi-Fi sometimes doesn't), do a normal

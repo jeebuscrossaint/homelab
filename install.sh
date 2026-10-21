@@ -36,7 +36,7 @@ ME=${SUDO_USER:-${DOAS_USER:-}}
 step "packages"
 if [ "$ID" = arch ]; then
 	missing=""
-	for p in docker docker-compose tailscale git openssl openssh zram-generator kexec-tools; do
+	for p in docker docker-compose tailscale git openssl openssh zram-generator kexec-tools binutils; do
 		pacman -Q "$p" >/dev/null 2>&1 || missing="$missing $p"
 	done
 	# shellcheck disable=SC2086
@@ -142,6 +142,8 @@ if [ "$ID" = arch ]; then
 	systemctl daemon-reload
 	systemctl enable screen-off.service >/dev/null 2>&1
 	ok "lid closed keeps running, never sleeps, boots to text, screen turns off when idle"
+	install -Dm755 "$HOMELAB_DIR/system/kexec-reboot" /usr/local/bin/kexec-reboot
+	ok "sudo kexec-reboot restarts without going through the firmware"
 else
 	install -D -m 755 "$HOMELAB_DIR/system/screen-off.start" /etc/local.d/screen-off.start
 	install -D -m 755 "$HOMELAB_DIR/system/docker-prune.periodic" /etc/periodic/weekly/docker-prune

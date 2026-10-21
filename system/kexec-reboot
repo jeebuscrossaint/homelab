@@ -1,0 +1,18 @@
+#!/bin/sh
+# kexec-reboot: reboot into the installed kernel without going through the firmware.
+# install.sh puts this in /usr/local/bin. Run: sudo kexec-reboot
+set -eu
+[ "$(id -u)" = 0 ] || { echo "run it as root: sudo kexec-reboot" >&2; exit 1; }
+
+if [ -f /boot/initramfs-linux.img ]; then
+	kexec -l /boot/vmlinuz-linux --initrd=/boot/initramfs-linux.img --reuse-cmdline
+else
+	# this machine boots a unified kernel image: the initramfs lives inside it
+	uki=$(sed -n 's/^default_uki="\(.*\)"/\1/p' /etc/mkinitcpio.d/linux.preset)
+	[ -f "$uki" ] || { echo "can't find the initramfs or kernel image" >&2; exit 1; }
+	tmp=$(mktemp -d)
+	trap 'rm -rf "$tmp"' EXIT
+	objcopy -O binary --only-section=.initrd "$uki" "$tmp/initrd"
+	kexec -l /boot/vmlinuz-linux --initrd="$tmp/initrd" --reuse-cmdline
+fi
+systemctl kexec
