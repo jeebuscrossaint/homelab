@@ -16,6 +16,7 @@ services:
       CORE_RETURN_HTTPS_URLS: "true"
       CORE_DEFAULT_DOMAIN: ${PUBLIC_DOMAIN}
       CORE_TRUST_PROXY: "true"
+      CORE_TRUSTED_PROXIES: 172.16.0.0/12,127.0.0.1,::1 # Caddy and Funnel
       FEATURES_USER_REGISTRATION: "false"
       FILES_MAX_FILE_SIZE: 1gb
     volumes:
