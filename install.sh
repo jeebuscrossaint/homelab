@@ -112,10 +112,10 @@ fi
 
 step "apps"
 docker network inspect proxy >/dev/null 2>&1 || docker network create proxy >/dev/null
-# downloads fail sometimes on flaky wifi, so each app gets 3 tries
+# downloads fail a lot on flaky wifi (Docker Hub especially), so each app gets 8 tries
 up() {
 	name=$(basename "$1")
-	for try in 1 2 3; do
+	for try in 1 2 3 4 5 6 7 8; do
 		if (
 			cd "$1"
 			if [ "$PULL" = yes ]; then docker compose pull --quiet; fi
@@ -123,7 +123,7 @@ up() {
 		); then
 			ok "$name"; return 0
 		fi
-		echo "   $name failed (try $try of 3), retrying..."; sleep 5
+		echo "   $name failed (try $try of 8), retrying..."; sleep 10
 	done
 	echo " ✗ $name didn't start. See why with: cd $1 && docker compose up"
 }
