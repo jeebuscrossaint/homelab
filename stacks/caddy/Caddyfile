@@ -52,3 +52,7 @@ term.{$LAB_DOMAIN} {
 draw.{$LAB_DOMAIN} {
 	reverse_proxy excalidash:8080
 }
+
+latex.{$LAB_DOMAIN} {
+	reverse_proxy overleaf:80
+}

@@ -32,6 +32,13 @@
         server: local
         container: excalidash
 
+    - Overleaf:
+        icon: overleaf.png
+        href: https://latex.{{HOMEPAGE_VAR_LAB_DOMAIN}}
+        description: LaTeX with autocomplete
+        server: local
+        container: overleaf
+
 - System:
     - Terminal:
         icon: mdi-console

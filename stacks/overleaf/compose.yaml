@@ -1,0 +1,56 @@
+# Overleaf: LaTeX editor with autocomplete and live PDF. https://latex.lab
+# First time: open https://latex.lab/launchpad to make your admin account.
+services:
+  overleaf:
+    image: sharelatex/sharelatex:6.3.1
+    container_name: overleaf
+    restart: unless-stopped
+    stop_grace_period: 60s
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      OVERLEAF_APP_NAME: Overleaf
+      OVERLEAF_SITE_URL: https://latex.${LAB_DOMAIN}
+      OVERLEAF_BEHIND_PROXY: "true"
+      OVERLEAF_SECURE_COOKIE: "true"
+      OVERLEAF_MONGO_URL: mongodb://mongo/sharelatex
+      OVERLEAF_REDIS_HOST: redis
+      REDIS_HOST: redis
+      ENABLED_LINKED_FILE_TYPES: project_file,project_output_file
+      ENABLE_CONVERSIONS: "true"
+      EMAIL_CONFIRMATION_DISABLED: "true"
+    volumes:
+      - ./data/overleaf:/var/lib/overleaf
+    networks: [default, proxy]
+
+  mongo:
+    image: mongo:8.0
+    container_name: overleaf-mongo
+    restart: unless-stopped
+    command: --replSet overleaf
+    environment:
+      MONGO_INITDB_DATABASE: sharelatex
+    extra_hosts:
+      - mongo:127.0.0.1
+    volumes:
+      - ./data/mongo:/data/db
+      - ./mongodb-init-replica-set.js:/docker-entrypoint-initdb.d/mongodb-init-replica-set.js:ro
+    healthcheck:
+      test: echo 'db.stats().ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: overleaf-redis
+    restart: unless-stopped
+    volumes:
+      - ./data/redis:/data
+
+networks:
+  proxy:
+    external: true
