@@ -4,6 +4,8 @@
 #   sudo ./install.sh --pull   same, but download newer app versions first
 # Safe to run again any time. It only does what's missing.
 set -eu
+# keep going if the terminal running this dies (e.g. term.lab while Docker restarts)
+trap '' HUP
 
 HOMELAB_DIR=$(cd "$(dirname "$0")" && pwd)
 ENV_FILE="$HOMELAB_DIR/.env"

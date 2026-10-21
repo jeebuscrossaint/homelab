@@ -62,6 +62,9 @@ A new server makes a new certificate, so you'd do this again after moving.
 | `tools.lab` | IT-Tools: converters, encoders, QR codes and more |
 | `term.lab` | terminal on the server (asks for your password) |
 
+Also running, with no page of its own: a **Tor Snowflake proxy** (`stacks/snowflake`)
+that helps people in censored countries reach Tor.
+
 ## What's where
 
 ```

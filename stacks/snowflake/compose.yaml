@@ -1,0 +1,10 @@
+# Snowflake proxy: helps people in censored countries reach Tor. Not a relay or exit,
+# works behind campus wifi, nothing to open. See how many people it helped:
+#   docker logs snowflake | grep "In the last"
+services:
+  snowflake:
+    image: thetorproject/snowflake-proxy:v2.15.2
+    container_name: snowflake
+    restart: unless-stopped
+    network_mode: host
+    command: ["-summary-interval", "1h"]
