@@ -38,12 +38,6 @@
         description: start, stop, edit stacks
         server: local
         container: dockge
-    - ntfy:
-        icon: ntfy.png
-        href: https://ntfy.{{HOMEPAGE_VAR_LAB_DOMAIN}}
-        description: phone notifications
-        server: local
-        container: ntfy
     - Uptime Kuma:
         icon: uptime-kuma.png
         href: https://status.{{HOMEPAGE_VAR_LAB_DOMAIN}}
