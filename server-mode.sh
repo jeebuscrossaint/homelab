@@ -25,7 +25,7 @@ DESKTOP=(
   polkit-gnome gnome-keyring udiskie libnotify playerctl xdg-user-dirs
 )
 AUDIO_BT=(
-  pipewire pipewire-alsa pipewire-jack pipewire-pulse wireplumber gst-plugin-pipewire
+  pipewire-alsa pipewire-pulse gst-plugin-pipewire
   bluez bluez-utils
 )
 THEMES_FONTS=(
