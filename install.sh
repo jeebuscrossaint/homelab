@@ -223,6 +223,9 @@ if [ -n "$ME" ] && [ -d "$HOMELAB_DIR/stacks/terminal" ]; then
 	chown -R "$ME:" "$HOME_DIR/.ssh"
 	chmod 700 "$HOME_DIR/.ssh"
 	chmod 600 "$AUTH"
+	# where coat drops term.lab's colors (over ssh, as you, so it must be yours)
+	mkdir -p "$HOMELAB_DIR/stacks/terminal/theme"
+	chown "$ME:" "$HOMELAB_DIR/stacks/terminal/theme"
 	ok "term.lab logs you in without a password"
 fi
 
