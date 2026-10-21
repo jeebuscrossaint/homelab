@@ -1,5 +1,5 @@
 # Dockge: web UI for starting/stopping/editing everything in ../stacks
-# Open http://<thinkpad>:5001 (or http://dockge.<LAB_DOMAIN>)
+# Open http://dockge.lab (or http://<tailscale ip>:5001)
 services:
   dockge:
     image: louislam/dockge:1
@@ -11,9 +11,9 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./data:/app/data
       # Dockge needs the stacks folder at the same path inside and outside
-      - /opt/homelab/stacks:/opt/homelab/stacks
+      - ${HOMELAB_DIR}/stacks:${HOMELAB_DIR}/stacks
     environment:
-      DOCKGE_STACKS_DIR: /opt/homelab/stacks
+      DOCKGE_STACKS_DIR: ${HOMELAB_DIR}/stacks
     networks: [proxy]
 
 networks:

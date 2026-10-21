@@ -1,103 +1,73 @@
 # homelab
 
-Self-hosted stuff for the ThinkPad X1 Carbon Gen 7.
+Fresh Arch or Alpine install → one command → all the apps running, reachable at
+`http://<app>.lab` from any device on your Tailscale.
+
+## New server
 
 ```
-dockge/          the UI that runs everything (started by hand once)
-stacks/          one folder per app, Dockge shows each as a stack
-  dns/           tiny DNS server so names like pdf.lab point at the ThinkPad
-  caddy/         reverse proxy: pdf.lab -> Stirling PDF, etc.
-  homepage/      dashboard
-  uptime-kuma/   uptime monitoring
-  stirling-pdf/  PDF tools
-  transmute/     file converter
-  searxng/       private search
-  changedetection/  website change alerts
-.env             your settings, shared by every stack (copy from .env.example)
+git clone https://github.com/jeebuscrossaint/homelab
+cd homelab
+sudo ./install.sh
 ```
 
-Ports open on the laptop: 80 (Caddy), 5001 (Dockge), and 53 on the Tailscale IP
-only (DNS). Everything else is reached through Caddy by name.
+(On Alpine, use `doas ./install.sh`, or just run it as root.)
 
-## Setup on the ThinkPad
+The script:
+- installs Docker, Tailscale and git
+- makes them start on boot
+- logs the machine into Tailscale (it prints a link to open)
+- writes `.env`
+- sets server stuff: lid closed keeps running, never sleeps, boots to text, and
+  the screen turns off when idle
+- starts every app
 
-1. Install Docker and Tailscale, and log into Tailscale.
+Run it again any time. It skips what's already done. `sudo ./install.sh --pull` also
+updates the apps to their newest versions.
 
-   ```
-   sudo pacman -S docker docker-compose tailscale git
-   sudo systemctl enable --now docker tailscaled
-   sudo usermod -aG docker $USER      # then log out and back in
-   sudo tailscale up
-   ```
+**One manual step, only for a new server:** tell Tailscale where `.lab` names live.
+Go to the Tailscale admin console, then **DNS**, **Add nameserver**, **Custom**,
+and enter the server's Tailscale IP (the script prints it). Turn on **Restrict to
+domain** and type `lab`.
 
-2. Put this repo at `/opt/homelab` (Dockge expects that path).
+## Apps
 
-   ```
-   sudo git clone <this repo> /opt/homelab
-   sudo chown -R $USER:$USER /opt/homelab
-   cd /opt/homelab
-   ```
-
-3. Make your `.env`.
-
-   ```
-   cp .env.example .env
-   tailscale ip -4                   # put this in TAILSCALE_IP
-   openssl rand -hex 32              # put this in SEARXNG_SECRET
-   ```
-
-   `LAB_DOMAIN=lab` means your apps are `pdf.lab`, `home.lab`, etc.
-
-4. Create the shared network and start Dockge.
-
-   ```
-   docker network create proxy
-   cd dockge && docker compose up -d
-   ```
-
-5. Open `http://<tailscale ip>:5001`, make an account, and you'll see every
-   folder in `stacks/`. Start **caddy** first, then the rest.
-
-6. Make the `.lab` names work on all your Tailscale devices: in the Tailscale
-   admin console go to **DNS**, **Add nameserver**, **Custom**, enter the
-   ThinkPad's Tailscale IP, turn on **Restrict to domain**, and type `lab`.
-
-7. Open `http://home.lab`. That's the dashboard.
-
-## Addresses
-
-| name | app |
+| address | app |
 |---|---|
 | `home.lab` | Homepage dashboard |
-| `dockge.lab` | Dockge |
+| `dockge.lab` | Dockge: start, stop and edit apps |
 | `status.lab` | Uptime Kuma |
 | `pdf.lab` | Stirling PDF |
-| `convert.lab` | Transmute |
+| `convert.lab` | Transmute (file converter) |
 | `search.lab` | SearXNG |
 | `changes.lab` | changedetection.io |
 
-These only work from devices on your Tailscale.
+## What's where
 
-## Adding a new app
+```
+install.sh       sets up a server from scratch
+.env             settings (made by install.sh, not in git)
+dockge/          the app manager
+stacks/          one folder per app, and Dockge shows each one
+  dns/           answers *.lab with this server's Tailscale IP
+  caddy/         sends pdf.lab to Stirling PDF, etc. (edit Caddyfile)
+  homepage/      the dashboard (edit config/services.yaml)
+  ...
+system/          server settings files that install.sh copies into /etc
+```
 
-1. Make `stacks/<name>/compose.yaml`. Copy any existing one. Give it a
+App data lives in `stacks/*/data/`. To move to a new server, copy that folder and
+`.env` along with the repo, then run `install.sh`.
+
+## Adding an app
+
+1. Make `stacks/<name>/compose.yaml`. Copy any existing one, give it a
    `container_name`, put it on the `proxy` network, and don't publish ports.
-2. Add a block to `stacks/caddy/Caddyfile`:
+2. Add it to `stacks/caddy/Caddyfile`:
    ```
    http://<name>.{$LAB_DOMAIN} {
    	reverse_proxy <container_name>:<port the app listens on>
    }
    ```
 3. Add a tile to `stacks/homepage/config/services.yaml`.
-4. In Dockge: start the new stack, then restart caddy.
-
-## Laptop-as-server stuff
-
-- **Keep it running with the lid shut:** in `/etc/systemd/logind.conf`, set
-  `HandleLidSwitch=ignore` and `HandleLidSwitchExternalPower=ignore`, then
-  `sudo systemctl restart systemd-logind`.
-- **Don't cook the battery** by keeping it at 100% forever:
-  `echo 80 | sudo tee /sys/class/power_supply/BAT0/charge_control_end_threshold`
-  (this resets on reboot; `tlp` can make it stick).
-- **Backups:** all app data lives in `stacks/*/data/`. Back up that folder
-  and `.env`, and you've got everything.
+4. Run `sudo ./install.sh` again (or start it in Dockge and restart caddy).

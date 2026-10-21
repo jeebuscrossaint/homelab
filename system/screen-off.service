@@ -1,0 +1,13 @@
+# Turn the built-in screen off after 1 minute of no typing.
+# Installed to /etc/systemd/system/screen-off.service
+[Unit]
+Description=Turn the console screen off after 1 minute idle
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/setterm --blank 1 --powerdown 1
+StandardOutput=tty
+TTYPath=/dev/tty1
+
+[Install]
+WantedBy=multi-user.target

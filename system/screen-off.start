@@ -1,0 +1,4 @@
+#!/bin/sh
+# Alpine: turn the built-in screen off after 1 minute of no typing.
+# Installed to /etc/local.d/screen-off.start
+printf '\033[9;1]\033[14;1]' > /dev/tty1
