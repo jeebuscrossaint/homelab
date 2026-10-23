@@ -8,7 +8,7 @@
 # The Funnel address skips Caddy, so outsiders get a login page, not the auto sign-in.
 services:
   pingvin:
-    image: smp46/pingvin-share-x:v2.0.0
+    image: smp46/pingvin-share-x:latest
     container_name: pingvin
     restart: unless-stopped
     ports:

@@ -3,7 +3,8 @@
 # login page signs you in as it (Tailscale-only, so that's fine).
 services:
   overleaf:
-    image: sharelatex/sharelatex:6.3.1
+    # stays on 6.x: a new major version wants manual upgrade steps
+    image: sharelatex/sharelatex:6
     container_name: overleaf
     restart: unless-stopped
     stop_grace_period: 60s
@@ -29,6 +30,7 @@ services:
     networks: [default, proxy]
 
   mongo:
+    # stays on 8.0: Mongo can only move up one major version at a time
     image: mongo:8.0
     container_name: overleaf-mongo
     restart: unless-stopped

@@ -2,7 +2,7 @@
 # Tailscale sends .lab lookups here (admin console > DNS > split DNS for "lab").
 services:
   dns:
-    image: coredns/coredns:1.14.7
+    image: coredns/coredns:latest
     container_name: dns
     restart: unless-stopped
     # host network so it can listen on the Tailscale IP. If Tailscale isn't up yet

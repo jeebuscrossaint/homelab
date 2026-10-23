@@ -3,7 +3,7 @@
 # (from snowflake-stats below); raw numbers: docker logs snowflake | grep "In the last"
 services:
   snowflake:
-    image: thetorproject/snowflake-proxy:v2.15.2
+    image: thetorproject/snowflake-proxy:latest
     container_name: snowflake
     restart: unless-stopped
     network_mode: host
@@ -12,7 +12,7 @@ services:
   # reads Snowflake's counters, keeps all-time totals, serves them as JSON for Homepage
   # on the Tailscale IP only (restarts until Tailscale is up at boot)
   snowflake-stats:
-    image: busybox:1.37
+    image: busybox:latest
     container_name: snowflake-stats
     restart: unless-stopped
     network_mode: host

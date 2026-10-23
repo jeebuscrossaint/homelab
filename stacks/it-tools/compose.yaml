@@ -1,7 +1,7 @@
 # IT-Tools: ~80 handy little tools in one page (converters, encoders, QR codes, hashes...). https://tools.lab
 services:
   it-tools:
-    image: corentinth/it-tools:2024.10.22-7ca5933
+    image: corentinth/it-tools:latest
     container_name: it-tools
     restart: unless-stopped
     networks: [proxy]

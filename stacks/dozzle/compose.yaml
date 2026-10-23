@@ -1,7 +1,7 @@
 # Dozzle: live logs for every app, with search. https://logs.lab
 services:
   dozzle:
-    image: amir20/dozzle:v11.3.4
+    image: amir20/dozzle:latest
     container_name: dozzle
     restart: unless-stopped
     volumes:
